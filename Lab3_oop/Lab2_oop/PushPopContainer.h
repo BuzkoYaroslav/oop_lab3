@@ -1,11 +1,13 @@
 #pragma once
 #include "Container.h"
 
-class PushPopContainer: public virtual Container {
+template <class T>
+class PushPopContainer: public virtual Container<T> {
 public:
-	virtual bool push(int value) = 0;
-	virtual int pop() = 0;
-	virtual int peek() const = 0;
+	virtual bool push(T const& value) = 0;
+	virtual T pop() = 0;
+	virtual T peek() const = 0;
+	virtual T& peek() = 0;
 
 	virtual ~PushPopContainer() = 0 {};
 };

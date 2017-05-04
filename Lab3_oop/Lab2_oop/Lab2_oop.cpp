@@ -111,20 +111,20 @@ int main()
 	cout << arr3[1]->toString() << endl;
 */
 
-	Container **cont = new Container*[2];
+	Container<int> **cont = new Container<int>*[2];
 
-	cont[0] = new StaticDeque();
-	cont[1] = new Stack();
+	cont[0] = new StaticDeque<int>();
+	cont[1] = new Stack<int>();
 
-	PushPopContainer *ppc;
-	Deque *d;
+	PushPopContainer<int> *ppc;
+	Deque<int> *d;
 
 	for (int i = 0; i < 2; i++) {
-		if (ppc = dynamic_cast<PushPopContainer*>(cont[i])) {
+		if (ppc = dynamic_cast<PushPopContainer<int>*>(cont[i])) {
 			for (int j = 1; j < 10; j++)
 			ppc->push(j);
 		} 
-		if (d = dynamic_cast<Deque*>(cont[i])) {
+		if (d = dynamic_cast<Deque<int>*>(cont[i])) {
 			for (int j = 1; j < 10; j++) {
 				d->pushFront(j);
 				d->pushBack(-(j));
@@ -139,10 +139,10 @@ int main()
 		while (!cont[i]->isEmpty())
 		{
 			int value;
-			if (ppc = dynamic_cast<PushPopContainer*>(cont[i])) {
+			if (ppc = dynamic_cast<PushPopContainer<int>*>(cont[i])) {
 				value = ppc->pop();
 			}
-			if (d = dynamic_cast<Deque*>(cont[i])) {
+			if (d = dynamic_cast<Deque<int>*>(cont[i])) {
 				value = d->popBack();
 			}
 

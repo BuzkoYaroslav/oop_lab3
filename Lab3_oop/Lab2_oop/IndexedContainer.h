@@ -1,10 +1,13 @@
 #pragma once
 #include "Container.h"
 
-class IndexedContainer : public virtual Container {
+template <class T>
+class IndexedContainer : public virtual Container<T> {
 public:
-	virtual int get(int index) const = 0;
-	virtual void set(int index, int value) = 0;
+	virtual T get(int index) const = 0;
+	virtual T& get(int index) = 0;
+
+	virtual void set(int index, T const& value) = 0;
 
 	virtual ~IndexedContainer() = 0 {};
 };

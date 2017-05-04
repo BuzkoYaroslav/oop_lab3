@@ -2,10 +2,11 @@
 #include "IndexedContainer.h"
 #include "Deque.h"
 
-class InsertableContainer: public IndexedContainer, public Deque {
+template <class T>
+class InsertableContainer: public IndexedContainer<T>, public Deque<T> {
 public:
-	virtual bool insertAt(int index, int value) = 0;
-	virtual int removeAt(int index) = 0;
+	virtual bool insertAt(int index, T const& value) = 0;
+	virtual T removeAt(int index) = 0;
 
 	virtual ~InsertableContainer() = 0 {};
 };

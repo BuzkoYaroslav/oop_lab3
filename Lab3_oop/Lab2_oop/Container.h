@@ -1,9 +1,12 @@
 #pragma once
 
+template <class T>
 class Container {
 public:
 	virtual int size() const = 0;
-	virtual bool isEmpty() const = 0;
+	virtual bool isEmpty() const {
+		return size() == 0;
+	}
 	virtual char* toString() const = 0;
 	virtual ~Container() = 0 {};
 };
