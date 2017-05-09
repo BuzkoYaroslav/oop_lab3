@@ -57,7 +57,11 @@ private:
 	bool checkIndex(int) const;
 
 	DataNode<T>* elementAtIndex(int) const;
+
+	void deleteElements();
 public:
+	LinkedList<T>& operator=(LinkedList<T> const&);
+
 	// Container
 	int size() const;
 	char* toString() const;
@@ -113,6 +117,10 @@ LinkedList<T>::LinkedList(LinkedList<T> const& copyFrom) {
 template <typename T>
 LinkedList<T>::~LinkedList()
 {
+	deleteElements();
+}
+template <typename T>
+void LinkedList<T>::deleteElements() {
 	DataNode<T> *current;
 	DataNode<T> *next = head;
 
@@ -389,4 +397,13 @@ DataNode<T>* LinkedList<T>::elementAtIndex(int index) const {
 	};
 
 	return current;
+}
+
+template <typename T>
+LinkedList<T>& LinkedList<T>::operator=(LinkedList<T> const& copyFrom) {
+	deleteElements();
+
+	LinkedList(copyFrom);
+
+	return this;
 }

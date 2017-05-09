@@ -51,7 +51,11 @@ private:
 
 	bool checkIndex(int) const;
 	void addElement(T const&);
+
+	void deleteElements();
 public:
+	StaticArray<T>& operator=(StaticArray<T> const&);
+
 	int size() const;
 	char* toString() const;
 	JavaIterator<T&>* createIterator();
@@ -84,6 +88,10 @@ StaticArray<T>::StaticArray(StaticArray<T> const& copyFrom) {
 template <typename T>
 StaticArray<T>::~StaticArray()
 {
+	deleteElements();
+}
+template <typename T>
+void StaticArray<T>::deleteElements() {
 	delete elements;
 }
 
@@ -155,3 +163,11 @@ bool StaticArray<T>::checkIndex(int index) const {
 	return index < 0 || index >= size();
 }
 
+template <typename T>
+StaticArray<T>& StaticArray<T>::operator=(StaticArray<T> const& copyFrom) {
+	deleteElements();
+
+	StaticArray(copyFrom);
+
+	return this;
+}

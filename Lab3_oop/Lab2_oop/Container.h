@@ -59,6 +59,6 @@ public:
 
 template <typename T>
 ostream& operator<<(ostream& os, Container<T> const& c) {
-	os << c->toString();
+	os << c.toString();
 	return os;
 }

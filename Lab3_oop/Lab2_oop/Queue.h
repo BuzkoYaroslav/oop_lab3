@@ -49,7 +49,11 @@ private:
 	DataNode<T> *tail;
 
 	int numberOfElements;
+
+	void deleteElements();
 public:
+	Queue<T>& operator=(Queue<T> const&);
+
 	int size() const;
 	char* toString() const;
 	JavaIterator<T&>* createIterator();
@@ -83,6 +87,10 @@ Queue<T>::Queue(Queue<T> const& copyFrom) {
 template <typename T>
 Queue<T>::~Queue()
 {
+	deleteElements();
+}
+template <typename T>
+void Queue<T>::deleteElements() {
 	DataNode<T> *current;
 	DataNode<T> *next = head;
 
@@ -185,6 +193,14 @@ bool Queue<T>::push(T const& value) {
 	return true;
 }
 
+template <typename T>
+Queue<T>& Queue<T>::operator=(Queue<T> const& copyFrom) {
+	deleteElements();
+
+	Queue(copyFrom);
+
+	return this;
+}
 
 
 

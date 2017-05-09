@@ -52,7 +52,11 @@ private:
 	DataNode<T> *tail;
 
 	int numberOfElements;
+
+	void deleteElements();
 public:
+	StaticDeque<T>& operator=(StaticDeque<T> const&);
+
 	int size() const;
 	char* toString() const;
 	JavaIterator<T&>* createIterator();
@@ -68,7 +72,7 @@ public:
 	T& peekFront();
 
 	StaticDeque();
-	StaticDeque(StaticDeque<T> const&)
+	StaticDeque(StaticDeque<T> const&);
 	~StaticDeque();
 };
 
@@ -90,6 +94,10 @@ StaticDeque<T>::StaticDeque(StaticDeque<T> const& copyFrom) {
 template <typename T>
 StaticDeque<T>::~StaticDeque()
 {
+	deleteElements();
+}
+template <typename T>
+void StaticDeque<T>::deleteElements() {
 	DataNode<T> *current;
 	DataNode<T> *next = head;
 
@@ -246,4 +254,13 @@ T StaticDeque<T>::popFront() {
 	numberOfElements -= 1;
 
 	return value;
+}
+
+template <typename T>
+StaticDeque<T>& StaticDeque<T>::operator=(StaticDeque<T> const& copyFrom) {
+	deleteElements();
+
+	StaticDeque(copyFrom);
+
+	return this;
 }

@@ -150,6 +150,13 @@ int main()
 		}
 	}
 
+	Stack<int> *a = new Stack<int>();
+	a->push(15);
+
+	Stack<int> a1 = *a, a2(*a);
+
+	cout << endl << *a << endl << a1 << endl << a2;
+
 	_getch();
 
     return 0;

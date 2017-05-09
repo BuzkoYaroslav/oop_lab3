@@ -48,7 +48,11 @@ class Stack: public PushPopContainer<T> {
 private:
 	DataNode<T> *head;
 	int numberOfElements;
+
+	void deleteElements();
 public:
+	Stack<T>& operator=(Stack<T> const&);
+
 	int size() const;
 	char* toString() const;
 	JavaIterator<T&>* createIterator();
@@ -60,7 +64,7 @@ public:
 	bool push(T const&);
 
 	Stack();
-	Stack(Stack<T const>&);
+	Stack(Stack<T> const&);
 	~Stack();
 };
 
@@ -72,7 +76,7 @@ Stack<T>::Stack()
 }
 template <typename T>
 Stack<T>::Stack(Stack<T> const& copyFrom) {
-	DataNode<T> *currentCopy = copyFrom->head;
+	DataNode<T> *currentCopy = copyFrom.head;
 	DataNode<T> *current = NULL, *prev = NULL;
 
 	do {
@@ -89,11 +93,15 @@ Stack<T>::Stack(Stack<T> const& copyFrom) {
 		}
 	} while ((currentCopy = currentCopy->next) != NULL);
 
-	numberOfElements = copyFrom->numberOfElements;
+	numberOfElements = copyFrom.numberOfElements;
 }
 template <typename T>
 Stack<T>::~Stack()
 {
+	deleteElements();
+}
+template <typename T>
+void Stack<T>::deleteElements() {
 	DataNode<T> *current;
 	DataNode<T> *next = head;
 
@@ -187,6 +195,15 @@ bool Stack<T>::push(T const& value) {
 	numberOfElements += 1;
 
 	return true;
+}
+
+template <typename T>
+Stack<T>& Stack<T>::operator=(Stack<T> const& copyFrom) {
+	deleteElements();
+
+	Stack(copyFrom);
+
+	return this;
 }
 
 
