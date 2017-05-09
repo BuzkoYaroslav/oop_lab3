@@ -1,7 +1,46 @@
 #pragma once
 #include "PushPopContainer.h"
 #include "DataNode.h"
+#include "JavaIterator.h"
 #include <string>
+
+template <class T, class U>
+class QueueIterator : public JavaIterator<U> {
+private: 
+	DataNode<T> currentIter;
+public:
+	QueueIterator(DataNode<T>*);
+	~QueueIterator();
+
+	U next();
+	bool hasNext() const;
+};
+
+template <typename T, typename U>
+QueueIterator<T, U>::QueueIterator(DataNode<T> *initialNode) {
+	currentNode = initialNode;
+}
+template <typename T, typename U>
+QueueIterator<T, U>::~QueueIterator() {
+
+}
+
+template <typename T, typename U>
+U QueueIterator<T, U>::next() {
+	T value = NULL;
+
+	if (currentIter == NULL) return value;
+	
+	value = currentIter->value;
+	currentIter = currentIter->next;
+
+	return value;
+}
+template <typename T, typename U>
+bool QueueIterator<T, U>::hasNext() const {
+	return currentIter != NULL &&
+		currentIter->next != NULL;
+}
 
 template <class T>
 class Queue: public PushPopContainer<T> {
@@ -12,8 +51,9 @@ private:
 	int numberOfElements;
 public:
 	int size() const;
-	bool isEmpty() const;
 	char* toString() const;
+	JavaIterator<T&>* createIterator();
+	JavaIterator<T const&>* createIterator() const;
 
 	T pop();
 	T peek() const;
@@ -21,8 +61,10 @@ public:
 	bool push(T const&);
 
 	Queue();
+	Queue(Queue<T> const&);
 	~Queue();
 };
+
 template <typename T>
 Queue<T>::Queue()
 {
@@ -30,17 +72,33 @@ Queue<T>::Queue()
 	tail = NULL;
 	numberOfElements = 0;
 }
+template <typename T>
+Queue<T>::Queue(Queue<T> const& copyFrom) {
+	DataNode<T> *currentCopy = copyFrom->tail;
+
+	do {
+		push(currentCopy->value);
+	} while ((currentCopy = currentCopy->prev) != NULL);
+}
+template <typename T>
+Queue<T>::~Queue()
+{
+	DataNode<T> *current;
+	DataNode<T> *next = head;
+
+	while (next != NULL) {
+		current = next;
+		next = current->next;
+		delete current;
+	}
+
+	delete next;
+}
 
 template <typename T>
 int Queue<T>::size() const {
 	return numberOfElements;
 }
-
-template <typename T>
-bool Queue<T>::isEmpty() const {
-	return numberOfElements == 0;
-}
-
 template <typename T>
 char* Queue<T>::toString() const {
 	DataNode<T> *current = head;
@@ -66,6 +124,14 @@ char* Queue<T>::toString() const {
 
 	return description;
 }
+template <typename T>
+JavaIterator<T&>* Queue<T>::createIterator() {
+	return new QueueIterator<T, T&>(head);
+}
+template <typename T>
+JavaIterator<T const&>* Queue<T>::createIterator() const {
+	return new QueueIterator<T, T const&>(head);
+}
 
 template <typename T>
 T Queue<T>::pop() {
@@ -90,13 +156,11 @@ T Queue<T>::peek() const {
 	if (isEmpty()) throw "Queue is empty!";
 	return head->value;
 }
-
 template <typename T>
 T& Queue<T>::peek() {
 	if (isEmpty()) throw "Queue is empty!";
 	return &(head->value);
 }
-
 template <typename T>
 bool Queue<T>::push(T const& value) {
 	DataNode<T> *newNode = new DataNode<T>();
@@ -122,18 +186,5 @@ bool Queue<T>::push(T const& value) {
 }
 
 
-template <typename T>
-Queue<T>::~Queue()
-{
-	DataNode<T> *current;
-	DataNode<T> *next = head;
 
-	while (next != NULL) {
-		current = next;
-		next = current->next;
-		delete current;
-	}
-
-	delete next;
-}
 

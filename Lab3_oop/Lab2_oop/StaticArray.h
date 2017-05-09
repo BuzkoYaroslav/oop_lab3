@@ -1,9 +1,46 @@
 #pragma once
 #include "IndexedContainer.h"
+#include "JavaIterator.h"
 #include <string>
 
+template <class T, class U>
+class StaticArrayIterator : public JavaIterator<U> {
+private:
+	int currentIterIndex;
+    T *elements;
+	int length;
+public:
+	StaticArrayIterator(T*, int);
+	~StaticArrayIterator();
+
+	U next();
+	bool hasNext() const;
+};
+
+template <typename T, typename U>
+StaticArrayIterator<T, U>::StaticArrayIterator(T *initialElements, int _length) {
+	elements = initialElements;
+	length =  _length
+}
+template <typename T, typename U>
+StaticArrayIterator<T, U>::~StaticArrayIterator() {
+
+}
+template <typename T, typename U>
+U StaticArrayIterator<T, U>::next() {
+	T value = NULL;
+	if (currentIterIndex >= length) return value;
+	value = elements[currentIterIndex++]
+
+	return value;
+}
+template <typename T, typename U>
+bool StaticArrayIterator<T, U>::hasNext() const {
+	return currentIterIndex < length;
+}
+
 template <class T>
-class StaticArray: public IndexedContainer<T> {
+class StaticArray: public IndexedContainer<T>, public JavaIterator<T> {
 private:
 	const int emptyIntValue = -1;
 	
@@ -16,14 +53,16 @@ private:
 	void addElement(T const&);
 public:
 	int size() const;
-	bool isEmpty() const;
 	char* toString() const;
+	JavaIterator<T&>* createIterator();
+	JavaIterator<T const&>* createIterator() const;
 
 	T get(int) const;
 	T& get(int);
 	void set(int, T const&);
 
 	StaticArray(int);
+	StaticArray(StaticArray<T> const&);
 	~StaticArray();
 };
 
@@ -34,7 +73,14 @@ StaticArray<T>::StaticArray(int _maxNumber)
 	elements = new T[maxNumber];
 	numberOfElements = 0;
 }
-
+template <typename T>
+StaticArray<T>::StaticArray(StaticArray<T> const& copyFrom) {
+	maxNumber = copyFrom->maxNumber;
+	
+	for (int i = 0; i < copyFrom->size(); i++) {
+		addElement(copyFrom[i]);
+	}
+}
 template <typename T>
 StaticArray<T>::~StaticArray()
 {
@@ -45,12 +91,6 @@ template <typename T>
 int StaticArray<T>::size() const {
 	return numberOfElements;
 }
-
-template <typename T>
-bool StaticArray<T>::isEmpty() const {
-	return numberOfElements == 0;
-}
-
 template <typename T>
 char* StaticArray<T>::toString() const {
 	char *description = new char[256]{ NULL };
@@ -71,10 +111,13 @@ char* StaticArray<T>::toString() const {
 
 	return description;
 }
-
 template <typename T>
-bool StaticArray<T>::checkIndex(int index) const {
-	return index < 0 || index >= size();
+JavaIterator<T&>* StaticArray<T>::createIterator() {
+	return new StaticArrayIterator<T, T&>(elements, numberOfElements);
+}
+template <typename T>
+JavaIterator<T const&>* StaticArray<T>::createIterator() const {
+	return new StaticArrayIterator<T, T const&>(elements, numberOfElements);
 }
 
 template <typename T>
@@ -84,7 +127,6 @@ T StaticArray<T>::get(int index) const {
 
 	return elements[index];
 }
-
 template <typename T>
 T& StaticArray<T>::get(int index) {
 	if (isEmpty()) return emptyIntValue;
@@ -92,7 +134,6 @@ T& StaticArray<T>::get(int index) {
 
 	return &(elements[index]);
 }
-
 template <typename T>
 void StaticArray<T>::set(int index, T const& value) {
 	if (index == size())
@@ -109,3 +150,8 @@ void StaticArray<T>::addElement(T const& value) {
 	elements[numberOfElements] = value;
 	numberOfElements += 1;
 }
+template <typename T>
+bool StaticArray<T>::checkIndex(int index) const {
+	return index < 0 || index >= size();
+}
+

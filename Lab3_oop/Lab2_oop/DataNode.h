@@ -7,13 +7,14 @@ public:
 	DataNode *prev;
 	DataNode *next;
 
-	DataNode();
+	DataNode(T);
 };
 
-template <typename T> DataNode<T>::DataNode()
+template <typename T> DataNode<T>::DataNode(T val)
 {
-	value = T();
+	value = val;
 	next = NULL;
 	prev = NULL;
 }
+
 

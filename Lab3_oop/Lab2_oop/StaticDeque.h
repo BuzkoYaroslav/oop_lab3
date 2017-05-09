@@ -1,7 +1,47 @@
 #pragma once
 #include "Deque.h"
 #include "DataNode.h"
+#include "JavaIterator.h"
+#include "Helper.h"
 #include <string>
+
+template <class T, class U>
+class StaticDequeIterator : public JavaIterator<U> {
+private:
+	DataNode<T> *currentIter;
+public:
+	StaticDequeIterator(DataNode<T>*);
+	~StaticDequeIterator();
+
+	U next();
+	bool hasNext() const;
+};
+
+template <typename T, typename U>
+StaticDequeIterator<T, U>::StaticDequeIterator(DataNode<T> *initialNode) {
+	currentIter = initialNode;
+}
+template <typename T, typename U>
+StaticDequeIterator<T, U>::~StaticDequeIterator() {
+
+}
+
+template <typename T, typename U>
+U StaticDequeIterator<T, U>::next() {
+	T value = NULL;
+
+	if (currentIter == NULL) return value;
+
+	value = currentIter->value;
+	currentIter = currentIter->next;
+
+	return value;
+}
+template <typename T, typename U>
+bool StaticDequeIterator<T, U>::hasNext() const {
+	return currentIter != NULL &&
+		currentIter->next != NULL;
+}
 
 template <class T>
 class StaticDeque: public Deque<T> {
@@ -14,8 +54,9 @@ private:
 	int numberOfElements;
 public:
 	int size() const;
-	bool isEmpty() const;
 	char* toString() const;
+	JavaIterator<T&>* createIterator();
+	JavaIterator<T const&>* createIterator() const;
 
 	bool pushBack(T const&);
 	bool pushFront(T const&);
@@ -27,6 +68,7 @@ public:
 	T& peekFront();
 
 	StaticDeque();
+	StaticDeque(StaticDeque<T> const&)
 	~StaticDeque();
 };
 
@@ -37,7 +79,14 @@ StaticDeque<T>::StaticDeque()
 	tail = NULL;
 	numberOfElements = 0;
 }
+template <typename T>
+StaticDeque<T>::StaticDeque(StaticDeque<T> const& copyFrom) {
+	DataNode<T> *currentCopy = copyFrom->tail;
 
+	do {
+		pushBack(currentCopy->value);
+	} while ((currentCopy = currentCopy->prev) != NULL);
+}
 template <typename T>
 StaticDeque<T>::~StaticDeque()
 {
@@ -57,12 +106,6 @@ template <typename T>
 int StaticDeque<T>::size() const {
 	return numberOfElements;
 }
-
-template <typename T>
-bool StaticDeque<T>::isEmpty() const {
-	return numberOfElements == 0;
-}
-
 template <typename T>
 char* StaticDeque<T>::toString() const {
 	DataNode<T> *current = head;
@@ -89,12 +132,18 @@ char* StaticDeque<T>::toString() const {
 
 	return description;
 }
+template <typename T>
+JavaIterator<T&>* StaticDeque<T>::createIterator() {
+	return new StaticDequeIterator<T, T&>(head);
+}
+template <typename T>
+JavaIterator<T const&>* StaticDeque<T>::createIterator() const {
+	return new StaticDequeIterator<T, T const&>(head);
+}
 
 template <typename T>
 bool StaticDeque<T>::pushBack(T const& value) {
-	DataNode<T> *newNode = new DataNode<T>();
-
-	newNode->value = value;
+	DataNode<T> *newNode = new DataNode<T>(value);
 
 	if (isEmpty()) {
 		head = newNode;
@@ -110,12 +159,9 @@ bool StaticDeque<T>::pushBack(T const& value) {
 
 	return true;
 }
-
 template <typename T>
 bool StaticDeque<T>::pushFront(T const& value) {
-	DataNode<T> *newNode = new DataNode<T>();
-
-	newNode->value = value;
+	DataNode<T> *newNode = new DataNode<T>(value);
 
 	if (isEmpty()) {
 		head = newNode;
@@ -131,35 +177,30 @@ bool StaticDeque<T>::pushFront(T const& value) {
 
 	return true;
 }
-
 template <typename T>
 T StaticDeque<T>::peekBack() const {
 	if (isEmpty()) return emptyIntValue;
 
 	return tail->value;
 }
-
 template <typename T>
 T StaticDeque<T>::peekFront() const {
 	if (isEmpty()) return emptyIntValue;
 
 	return head->value;
 }
-
 template <typename T>
 T& StaticDeque<T>::peekBack() {
 	if (isEmpty()) return emptyIntValue;
 
 	return tail->value;
 }
-
 template <typename T>
 T& StaticDeque<T>::peekFront() {
 	if (isEmpty()) return emptyIntValue;
 
 	return head->value;
 }
-
 template <typename T>
 T StaticDeque<T>::popBack() {
 	if (isEmpty()) return NULL;
@@ -183,7 +224,6 @@ T StaticDeque<T>::popBack() {
 
 	return value;
 }
-
 template <typename T>
 T StaticDeque<T>::popFront() {
 	if (isEmpty()) return NULL;

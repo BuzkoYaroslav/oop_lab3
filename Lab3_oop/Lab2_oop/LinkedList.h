@@ -2,7 +2,46 @@
 #include "InsertableContainer.h"
 #include "PushPopContainer.h"
 #include "DataNode.h"
+#include "Helper.h"
 #include <string>
+
+template <class T, class U>
+class LinkedListIterator : public JavaIterator<U> {
+private:
+	DataNode<T> *currentIter;
+public:
+	LinkedListIterator(DataNode<T>*);
+	~LinkedListIterator();
+
+	U next();
+	bool hasNext() const;
+};
+
+template <typename T, typename U>
+LinkedListIterator<T, U>::LinkedListIterator(DataNode<T> *initialNode) {
+	currentNode = initialNode;
+}
+template <typename T, typename U>
+LinkedListIterator<T, U>::~LinkedListIterator() {
+
+}
+
+template <typename T, typename U>
+U LinkedListIterator<T, U>::next() {
+	T value = NULL; 
+
+	if (currentIter == NULL) return value;
+	
+	value = currentIter->value;
+	currentIter = current->next;
+
+	return value;
+}
+template <typename T, typename U>
+bool LinkedListIterator<T, U>::hasNext() const {
+	return currentIter != NULL &&
+		currentIter->next != NULL;
+}
 
 template <class T>
 class LinkedList: public InsertableContainer<T>, public PushPopContainer<T>
@@ -21,8 +60,9 @@ private:
 public:
 	// Container
 	int size() const;
-	bool isEmpty() const;
 	char* toString() const;
+	JavaIterator<T&>* createIterator();
+	JavaIterator<T const&>* createIterator() const;
 
 	// PushPopContainer
 	bool push(T const&);
@@ -50,6 +90,7 @@ public:
 	T removeAt(int);
 
 	LinkedList();
+	LinkedList(LinkedList<T> const&);
 	~LinkedList();
 };
 
@@ -61,18 +102,34 @@ LinkedList<T>::LinkedList()
 
 	numberOfElements = 0;
 }
+template <typename T>
+LinkedList<T>::LinkedList(LinkedList<T> const& copyFrom) {
+	DataNode<T> *currentCopy = copyFrom->tail;
+
+	do {
+		push(currentCopy->value);
+	} while ((currentCopy = currentCopy->prev) != NULL);
+}
+template <typename T>
+LinkedList<T>::~LinkedList()
+{
+	DataNode<T> *current;
+	DataNode<T> *next = head;
+
+	while (next != NULL) {
+		current = next;
+		next = current->next;
+		delete current;
+	}
+
+	delete next;
+}
 
 // Container
 template <typename T>
 int LinkedList<T>::size() const {
 	return numberOfElements;
 }
-
-template <typename T>
-bool LinkedList<T>::isEmpty() const {
-	return numberOfElements == 0;
-}
-
 template <typename T>
 char* LinkedList<T>::toString() const {
 	DataNode<T> *current = head;
@@ -99,6 +156,14 @@ char* LinkedList<T>::toString() const {
 
 	return description;
 }
+template <typename T>
+JavaIterator<T&>* LinkedList<T>::createIterator() {
+	return new LinkedListIterator<T, T&>(head);
+}
+template <typename T>
+JavaIterator<T const&>* LinkedList<T>::createIterator() const {
+	return new LinkedListIterator<T, T const&>(head);
+}
 
 // PushPopContainer
 template <typename T>
@@ -107,14 +172,12 @@ T LinkedList<T>::peek() const {
 
 	return tail->value;
 }
-
 template <typename T>
 T& LinkedList<T>::peek() {
 	if (isEmpty()) return emptyIntValue;
 
 	return &(tail->value);
 }
-
 template <typename T>
 T LinkedList<T>::pop() {
 	if (isEmpty()) return emptyIntValue;
@@ -132,7 +195,6 @@ T LinkedList<T>::pop() {
 
 	return value;
 }
-
 template <typename T>
 bool LinkedList<T>::push(T const& value) {
 	DataNode<T> *newNode = new DataNode<T>();
@@ -181,12 +243,10 @@ bool LinkedList<T>::pushFront(T const& value) {
 
 	return true;
 }
-
 template <typename T>
 bool LinkedList<T>::pushBack(T const& value) {
 	return push(value);
 }
-
 template <typename T>
 T LinkedList<T>::popFront() {
 	if (isEmpty()) return emptyIntValue;
@@ -205,31 +265,26 @@ T LinkedList<T>::popFront() {
 	return value;
 
 }
-
 template <typename T>
 T LinkedList<T>::popBack() {
 	return pop();
 }
-
 template <typename T>
 T LinkedList<T>::peekFront() const {
 	if (isEmpty()) return emptyIntValue;
 
 	return head->value;
 }
-
 template <typename T>
 T LinkedList<T>::peekBack() const {
 	return peek();
 }
-
 template <typename T>
 T& LinkedList<T>::peekFront() {
 	if (isEmpty()) return emptyIntValue;
 
 	return &(head->value);
 }
-
 template <typename T>
 T& LinkedList<T>::peekBack() {
 	return peek();
@@ -242,14 +297,12 @@ T LinkedList<T>::get(int index) const {
 
 	return element == NULL ? emptyIntValue : element->value;
 }
-
 template <typename T>
 T& LinkedList<T>::get(int index) {
 	DataNode<T> *element = elementAtIndex(index);
 
 	return element == NULL ? &emptyIntValue : &(element->value);
 }
-
 template <typename T>
 void LinkedList<T>::set(int index, T const& value) {
 	if (index == size()) {
@@ -291,7 +344,6 @@ bool LinkedList<T>::insertAt(int index, T const& value) {
 		return true;
 	}
 }
-
 template <typename T>
 T LinkedList<T>::removeAt(int index) {
 	if (isEmpty()) return emptyIntValue;
@@ -322,22 +374,6 @@ bool LinkedList<T>::checkIndex(int index) const {
 	return (index < 0 ||
 		index >= size());
 }
-
-template <typename T>
-LinkedList<T>::~LinkedList()
-{
-	DataNode<T> *current;
-	DataNode<T> *next = head;
-
-	while (next != NULL) {
-		current = next;
-		next = current->next;
-		delete current;
-	}
-
-	delete next;
-}
-
 template <typename T>
 DataNode<T>* LinkedList<T>::elementAtIndex(int index) const {
 	if (isEmpty()) return NULL;

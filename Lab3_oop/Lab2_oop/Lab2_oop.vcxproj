@@ -149,8 +149,10 @@
     <ClInclude Include="Container.h" />
     <ClInclude Include="DataNode.h" />
     <ClInclude Include="Deque.h" />
+    <ClInclude Include="Helper.h" />
     <ClInclude Include="IndexedContainer.h" />
     <ClInclude Include="InsertableContainer.h" />
+    <ClInclude Include="JavaIterator.h" />
     <ClInclude Include="LinkedList.h" />
     <ClInclude Include="PushPopContainer.h" />
     <ClInclude Include="Queue.h" />
