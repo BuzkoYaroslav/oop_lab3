@@ -14,6 +14,7 @@
 #include "StaticDeque.h"
 #include "LinkedList.h"
 #include <iostream>
+#include <string>
 #include <conio.h>
 using namespace std;
 
@@ -133,29 +134,52 @@ int main()
 		cout << cont[i]->toString() << endl;
 	}
 
+	cout << *cont[0] << endl;
+	cout << *cont[1] << endl;
 
+	cont[1]->sort();
 
-	for (int i = 0; i < 2; i++) {
-		while (!cont[i]->isEmpty())
-		{
-			int value;
-			if (ppc = dynamic_cast<PushPopContainer<int>*>(cont[i])) {
-				value = ppc->pop();
-			}
-			if (d = dynamic_cast<Deque<int>*>(cont[i])) {
-				value = d->popBack();
-			}
+	cout << *cont[1] << endl;
 
-			cout << "Popped element from " << i << " container = " << value << endl;
-		}
-	}
+	//for (int i = 0; i < 2; i++) {
+	//	while (!cont[i]->isEmpty())
+	//	{
+	//		int value;
+	//		if (ppc = dynamic_cast<PushPopContainer<int>*>(cont[i])) {
+	//			value = ppc->pop();
+	//		}
+	//		if (d = dynamic_cast<Deque<int>*>(cont[i])) {
+	//			value = d->popBack();
+	//		}
 
-	Stack<int> *a = new Stack<int>();
-	a->push(15);
+	//		cout << "Popped element from " << i << " container = " << value << endl;
+	//	}
+	//}
 
-	Stack<int> a1 = *a, a2(*a);
+	//Stack<string> *a = new Stack<string>();
+	//a->push("string");
 
-	cout << endl << *a << endl << a1 << endl << a2;
+	//Stack<string> a1 = *a, a2(*a);
+
+	//cout << endl << *a << endl << a1 << endl << a2 << endl;
+
+	//a1.push("string1");
+	//a2.push("string2");
+
+	//cout << endl << *a << endl << a1 << endl << a2 << endl;
+
+	//cout << "a1 == a " << (a1 == *a);
+
+	//Stack<string> a, b;
+
+	//a.push("string");
+	//a.push("1");
+
+	//b.push("string");
+	//b.push("1");
+	//b.push("1");
+
+	//cout << endl << "a == b " << (a == b) << endl;
 
 	_getch();
 

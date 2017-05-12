@@ -2,26 +2,23 @@
 #include "JavaIterator.h"
 #include <sstream>
 #include <string>
+#include <memory>
 using namespace std;
 
 template <class T>
 class Container {
 public:
 	bool operator==(Container<T> const& cont) const {
-		JavaIterator<T const&> *iter = createIterator();
-		JavaIterator<T const&> *iterCont = cont.createIterator();
-		T val1, val2;
+		auto iter = unique_ptr<JavaIterator<T const&>>(createIterator());
+		auto iterCont = unique_ptr<JavaIterator<T const&>>(cont.createIterator());
 
-		while ((val1 = iter->next()) != NULL &&
-			   (val2 = iterCont->next()) != NULL) {
-			if (val1 != val2)
+		while (iter->hasNext() &&
+			   iterCont->hasNext()) {
+			if (iter->next() != iterCont->next())
 				return false;
-
-			val1 = NULL;
-			val2 = NULL;
 		}
 
-		return val1 == val2;
+		return !iter->hasNext() && !iterCont->hasNext();
 	}
 	bool operator!=(Container<T> const& cont) const {
 		return !(this == cont);
@@ -37,17 +34,31 @@ public:
 		char *res = new char[256]{ NULL };
 		T val;
 
+		strcat(res, "Container\n");
+		strcat(res, "Head ->");
+
 		stringstream stream;
-		while ((val = iter->next()) != NULL) {
+		while (iter->hasNext()) {
 			char *line = new char[256]{ NULL };
+			
+			val = iter->next();
 
 			stream << val;
 			stream >> line;
 
 			strcat(res, line);
+			
+			if (iter->hasNext())
+				strcat(res, ", ");
+
+			stream.clear();
 
 			delete line;
 		}
+
+		delete iter;
+
+		strcat(res, "<- Tail\n");
 
 		return res;
 	}
@@ -55,6 +66,34 @@ public:
 
 	virtual JavaIterator<T&>* createIterator() = 0;
 	virtual JavaIterator<T const&>* createIterator() const = 0;
+
+	virtual void sort() {
+		JavaIterator<T&> *mainIterator = createIterator();
+
+		int count = 0;
+
+		while (mainIterator->hasNext()) {
+			JavaIterator<T&> *iter = createIterator();
+
+			for (int i = 0; i < count; i++)
+				iter->next();
+
+			T& min = iter->next();
+
+			while (iter->hasNext()) {
+				T& temp = iter->next();
+				T tmp = min;
+				if (temp < min) {
+					min = temp;
+					temp = tmp;
+				}
+			}
+
+			mainIterator->next();
+
+			count++;
+		}
+	}
 };
 
 template <typename T>

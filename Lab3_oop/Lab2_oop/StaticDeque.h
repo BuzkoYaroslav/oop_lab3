@@ -28,19 +28,16 @@ StaticDequeIterator<T, U>::~StaticDequeIterator() {
 
 template <typename T, typename U>
 U StaticDequeIterator<T, U>::next() {
-	T value = NULL;
+	if (currentIter == NULL) throw "Empty iterator!";
 
-	if (currentIter == NULL) return value;
-
-	value = currentIter->value;
+	U value = currentIter->value;
 	currentIter = currentIter->next;
 
 	return value;
 }
 template <typename T, typename U>
 bool StaticDequeIterator<T, U>::hasNext() const {
-	return currentIter != NULL &&
-		currentIter->next != NULL;
+	return currentIter != NULL;
 }
 
 template <class T>
@@ -120,14 +117,19 @@ char* StaticDeque<T>::toString() const {
 	char *description = new char[256]{ NULL };
 
 	strcat(description, "StaticDeque\nHead ->");
+	stringstream stream;
 	do {
 		if (current != head) {
 			strcat(description, ", ");
 		}
 		char *val = new char[256]{ NULL };
 
-		itoa(current->value, val, 10);
+		stream << current->value;
+		stream >> val;
+
 		strcat(description, val);
+
+		stream.clear();
 
 		current = current->next;
 

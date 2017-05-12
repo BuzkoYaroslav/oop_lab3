@@ -8,6 +8,7 @@ public:
 	DataNode *next;
 
 	DataNode(T);
+	DataNode(DataNode<T> const&);
 };
 
 template <typename T> DataNode<T>::DataNode(T val)
@@ -15,6 +16,11 @@ template <typename T> DataNode<T>::DataNode(T val)
 	value = val;
 	next = NULL;
 	prev = NULL;
+}
+
+template <typename T>
+DataNode<T>::DataNode(DataNode<T> const& copyFrom) {
+	value = copyFrom.value;
 }
 
 

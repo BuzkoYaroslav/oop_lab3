@@ -2,6 +2,8 @@
 #include "IndexedContainer.h"
 #include "JavaIterator.h"
 #include <string>
+#include <sstream>
+using namespace std;
 
 template <class T, class U>
 class StaticArrayIterator : public JavaIterator<U> {
@@ -19,7 +21,7 @@ public:
 
 template <typename T, typename U>
 StaticArrayIterator<T, U>::StaticArrayIterator(T *initialElements, int _length) {
-	elements = initialElements;
+	elements = &(*initialElements);
 	length =  _length
 }
 template <typename T, typename U>
@@ -28,9 +30,9 @@ StaticArrayIterator<T, U>::~StaticArrayIterator() {
 }
 template <typename T, typename U>
 U StaticArrayIterator<T, U>::next() {
-	T value = NULL;
-	if (currentIterIndex >= length) return value;
-	value = elements[currentIterIndex++]
+	if (currentIterIndex >= length) throw "Empty iterator!";
+	
+	U value = elements[currentIterIndex++]
 
 	return value;
 }
@@ -103,6 +105,7 @@ template <typename T>
 char* StaticArray<T>::toString() const {
 	char *description = new char[256]{ NULL };
 
+	stringstream stream;
 	strcat(description, "StaticArray\nHead->");
 	for (int i = 0; i < size(); i++) {
 		if (i != 0) {
@@ -110,7 +113,11 @@ char* StaticArray<T>::toString() const {
 		}
 		char *val = new char[256]{ NULL };
 
-		itoa(elements[i], val, 10);
+		stream << elements[i];
+		stream >> val;
+
+		stream.clear();
+
 		strcat(description, val);
 
 		delete val;

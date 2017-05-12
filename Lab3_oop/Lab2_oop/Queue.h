@@ -18,7 +18,7 @@ public:
 
 template <typename T, typename U>
 QueueIterator<T, U>::QueueIterator(DataNode<T> *initialNode) {
-	currentNode = initialNode;
+	currentNode = &(*initialNode);
 }
 template <typename T, typename U>
 QueueIterator<T, U>::~QueueIterator() {
@@ -27,19 +27,16 @@ QueueIterator<T, U>::~QueueIterator() {
 
 template <typename T, typename U>
 U QueueIterator<T, U>::next() {
-	T value = NULL;
-
-	if (currentIter == NULL) return value;
+	if (currentIter == NULL) throw "Empty iterator!";
 	
-	value = currentIter->value;
+	U value = currentIter->value;
 	currentIter = currentIter->next;
 
 	return value;
 }
 template <typename T, typename U>
 bool QueueIterator<T, U>::hasNext() const {
-	return currentIter != NULL &&
-		currentIter->next != NULL;
+	return currentIter != NULL;
 }
 
 template <class T>
@@ -113,14 +110,20 @@ char* Queue<T>::toString() const {
 	char *description = new char[256]{ NULL };
 
 	strcat(description, "Queue\nHead ->");
+	stringstream stream;
 	do {
 		if (current != head) {
 			strcat(description, ", ");
 		}
 		char *val = new char[256]{ NULL };
-		itoa(current->value, val, 10);
+
+		stream << current->value;
+		stream >> val;
 
 		strcat(description, val);
+
+		stream.clear();
+
 		current = current->next;
 
 		delete val;

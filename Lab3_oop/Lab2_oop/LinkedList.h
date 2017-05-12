@@ -19,7 +19,7 @@ public:
 
 template <typename T, typename U>
 LinkedListIterator<T, U>::LinkedListIterator(DataNode<T> *initialNode) {
-	currentNode = initialNode;
+	currentNode = &(*initialNode);
 }
 template <typename T, typename U>
 LinkedListIterator<T, U>::~LinkedListIterator() {
@@ -28,19 +28,16 @@ LinkedListIterator<T, U>::~LinkedListIterator() {
 
 template <typename T, typename U>
 U LinkedListIterator<T, U>::next() {
-	T value = NULL; 
-
-	if (currentIter == NULL) return value;
+	if (currentIter == NULL) throw "Empty iterator!";
 	
-	value = currentIter->value;
+	U value = currentIter->value;
 	currentIter = current->next;
 
 	return value;
 }
 template <typename T, typename U>
 bool LinkedListIterator<T, U>::hasNext() const {
-	return currentIter != NULL &&
-		currentIter->next != NULL;
+	return currentIter != NULL;
 }
 
 template <class T>
@@ -143,15 +140,20 @@ char* LinkedList<T>::toString() const {
 	DataNode<T> *current = head;
 	char *description = new char[256]{ NULL };
 
-	strcat(description, "Linked list\nHead ->");
+	strcat(description, "LinkedList\nHead ->");
+	stringstream stream;
 	do {
 		if (current != head) {
 			strcat(description, ", ");
 		}
 		char *val = new char[256]{ NULL };
 
-		itoa(current->value, val, 10);
+		stream << current->value;
+		stream >> val;
+
 		strcat(description, val);
+
+		stream.clear();
 
 		current = current->next;
 

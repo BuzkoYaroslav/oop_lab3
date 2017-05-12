@@ -3,7 +3,9 @@
 #include "DataNode.h"
 #include "JavaIterator.h"
 #include "Helper.h"
+#include <sstream>
 #include <string>
+using namespace std;
 
 template <class T, class U>
 class StackIterator : public JavaIterator<U> {
@@ -19,7 +21,7 @@ public:
 
 template <typename T, typename U>
 StackIterator<T, U>::StackIterator(DataNode<T> *initialNode) {
-	currentIter = initialNode;
+	currentIter = &(*initialNode);
 }
 template <typename T, typename U>
 StackIterator<T, U>::~StackIterator() {
@@ -28,19 +30,17 @@ StackIterator<T, U>::~StackIterator() {
 
 template <typename T, typename U>
 bool StackIterator<T, U>::hasNext() const {
-	return currentIter != NULL &&
-		currentIter->next != NULL;
+	return currentIter != NULL;
 }
 template <typename T, typename U>
 U StackIterator<T, U>::next() {
-	T value = NULL;
-	if (currentIter == NULL) return value;
+	if (currentIter == NULL) throw "Empty iterator";
 	
-	value = currentIter->value;
+	U val = currentIter->value;
 
 	currentIter = currentIter->next;
 
-	return value;
+	return val;
 }
 
 template <class T>
@@ -124,14 +124,20 @@ char* Stack<T>::toString() const {
 	char *description = new char[256]{ NULL };
 
 	strcat(description, "Stack\nHead ->");
+	stringstream stream;
 	do {
 		if (current != head) {
 			strcat(description, ", ");
 		}
 		char *val = new char[256]{ NULL };
-		itoa(current->value, val, 10);
+
+		stream << current->value;
+		stream >> val;
 
 		strcat(description, val);
+
+		stream.clear();
+
 		current = current->next;
 
 		delete val;
