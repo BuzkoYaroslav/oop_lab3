@@ -19,7 +19,7 @@ public:
 
 template <typename T, typename U>
 StaticDequeIterator<T, U>::StaticDequeIterator(DataNode<T> *initialNode) {
-	currentIter = initialNode;
+	currentIter = &(*initialNode);
 }
 template <typename T, typename U>
 StaticDequeIterator<T, U>::~StaticDequeIterator() {
