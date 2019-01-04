@@ -137,9 +137,14 @@ int main()
 	cout << *cont[0] << endl;
 	cout << *cont[1] << endl;
 
-	cont[1]->sort();
+	StaticDeque<int> stack = StaticDeque<int>();
+	for (int i = 0; i < 10; i++)
+		stack.pushFront(i);
+	cout << stack << endl;
 
-	cout << *cont[1] << endl;
+	Container<int>::sort<StaticDeque<int>>(stack);
+
+	cout << stack << endl;
 
 	//for (int i = 0; i < 2; i++) {
 	//	while (!cont[i]->isEmpty())
@@ -185,4 +190,3 @@ int main()
 
     return 0;
 }
-

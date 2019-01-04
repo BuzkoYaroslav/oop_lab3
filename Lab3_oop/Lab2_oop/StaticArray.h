@@ -5,6 +5,8 @@
 #include <sstream>
 using namespace std;
 
+template <class T> class StaticArray;
+
 template <class T, class U>
 class StaticArrayIterator : public JavaIterator<U> {
 private:
@@ -13,6 +15,7 @@ private:
 	int length;
 public:
 	StaticArrayIterator(T*, int);
+	StaticArrayIterator(StaticArray<T> const&);
 	~StaticArrayIterator();
 
 	U next();
@@ -23,6 +26,9 @@ template <typename T, typename U>
 StaticArrayIterator<T, U>::StaticArrayIterator(T *initialElements, int _length) {
 	elements = &(*initialElements);
 	length =  _length
+}
+template <typename T, typename U>
+StaticArrayIterator<T, U>::StaticArrayIterator(StaticArray<T> const& container): StaticArrayIterator(container.elements, container.numberOfElements) {
 }
 template <typename T, typename U>
 StaticArrayIterator<T, U>::~StaticArrayIterator() {
@@ -56,6 +62,11 @@ private:
 
 	void deleteElements();
 public:
+	typedef StaticArrayIterator<T, T&> iterator;
+
+	friend class StaticArrayIterator<T, T&>;
+	friend class StaticArrayIterator<T, T const&>;
+
 	StaticArray<T>& operator=(StaticArray<T> const&);
 
 	int size() const;

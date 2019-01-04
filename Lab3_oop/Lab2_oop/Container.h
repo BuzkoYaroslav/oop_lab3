@@ -82,14 +82,51 @@ public:
 
 			while (iter->hasNext()) {
 				T& temp = iter->next();
-				T tmp = min;
+				
 				if (temp < min) {
+					T tmp = min;
+
 					min = temp;
 					temp = tmp;
 				}
 			}
 
 			mainIterator->next();
+
+			count++;
+
+			delete iter;
+		}
+
+		delete mainIterator;
+	}
+
+	template <typename C>
+	static void sort(C &c) {
+		typename C::iterator mainIterator = typename C::iterator(c);
+
+		int count = 0;
+
+		while (mainIterator.hasNext()) {
+			typename C::iterator iter = typename C::iterator(c);
+
+			for (int i = 0; i < count; i++)
+				iter.next();
+
+			T& min = iter.next();
+
+			while (iter.hasNext()) {
+				T& temp = iter.next();
+
+				if (temp < min) {
+					T tmp = min;
+
+					min = temp;
+					temp = tmp;
+				}
+			}
+
+			mainIterator.next();
 
 			count++;
 		}

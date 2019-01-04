@@ -4,12 +4,15 @@
 #include "JavaIterator.h"
 #include <string>
 
+template <class T> class Queue;
+
 template <class T, class U>
 class QueueIterator : public JavaIterator<U> {
 private: 
 	DataNode<T> currentIter;
 public:
 	QueueIterator(DataNode<T>*);
+	QueueIterator(Queue<T> const&);
 	~QueueIterator();
 
 	U next();
@@ -19,6 +22,9 @@ public:
 template <typename T, typename U>
 QueueIterator<T, U>::QueueIterator(DataNode<T> *initialNode) {
 	currentNode = &(*initialNode);
+}
+template <typename T, typename U>
+QueueIterator<T, U>::QueueIterator(Queue<T> const& container): QueueIterator(container.head) {
 }
 template <typename T, typename U>
 QueueIterator<T, U>::~QueueIterator() {
@@ -49,6 +55,11 @@ private:
 
 	void deleteElements();
 public:
+	typedef QueueIterator<T, T&> iterator;
+
+	friend class QueueIterator<T, T&>;
+	friend class QueueIterator<T, T const&>;
+
 	Queue<T>& operator=(Queue<T> const&);
 
 	int size() const;

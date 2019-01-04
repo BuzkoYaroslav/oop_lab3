@@ -5,12 +5,15 @@
 #include "Helper.h"
 #include <string>
 
+template <class T> class StaticDeque;
+
 template <class T, class U>
 class StaticDequeIterator : public JavaIterator<U> {
 private:
 	DataNode<T> *currentIter;
 public:
 	StaticDequeIterator(DataNode<T>*);
+	StaticDequeIterator(StaticDeque<T> const&);
 	~StaticDequeIterator();
 
 	U next();
@@ -20,6 +23,9 @@ public:
 template <typename T, typename U>
 StaticDequeIterator<T, U>::StaticDequeIterator(DataNode<T> *initialNode) {
 	currentIter = &(*initialNode);
+}
+template <typename T, typename U>
+StaticDequeIterator<T, U>::StaticDequeIterator(StaticDeque<T> const& container): StaticDequeIterator(container.head) {
 }
 template <typename T, typename U>
 StaticDequeIterator<T, U>::~StaticDequeIterator() {
@@ -52,6 +58,11 @@ private:
 
 	void deleteElements();
 public:
+	typedef StaticDequeIterator<T, T&> iterator;
+
+	friend class StaticDequeIterator<T, T&>;
+	friend class StaticDequeIterator<T, T const&>;
+
 	StaticDeque<T>& operator=(StaticDeque<T> const&);
 
 	int size() const;

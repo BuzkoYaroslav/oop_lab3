@@ -5,12 +5,15 @@
 #include "Helper.h"
 #include <string>
 
+template <class T> class LinkedList;
+
 template <class T, class U>
 class LinkedListIterator : public JavaIterator<U> {
 private:
 	DataNode<T> *currentIter;
 public:
 	LinkedListIterator(DataNode<T>*);
+	LinkedListIterator(LinkedList<T> const&);
 	~LinkedListIterator();
 
 	U next();
@@ -20,6 +23,9 @@ public:
 template <typename T, typename U>
 LinkedListIterator<T, U>::LinkedListIterator(DataNode<T> *initialNode) {
 	currentNode = &(*initialNode);
+}
+template <typename T, typename U>
+LinkedListIterator<T, U>::LinkedListIterator(LinkedList<T> const& container): LinkedListIterator(container.head) {
 }
 template <typename T, typename U>
 LinkedListIterator<T, U>::~LinkedListIterator() {
@@ -57,6 +63,11 @@ private:
 
 	void deleteElements();
 public:
+	typedef LinkedListIterator<T, T&> iterator;
+
+	friend class LinkedListIterator<T, T&>;
+	friend class LinkedListIterator<T, T const&>;
+
 	LinkedList<T>& operator=(LinkedList<T> const&);
 
 	// Container

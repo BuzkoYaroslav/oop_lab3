@@ -7,12 +7,16 @@
 #include <string>
 using namespace std;
 
+template <class T> class Stack;
+
 template <class T, class U>
 class StackIterator : public JavaIterator<U> {
 private:
 	DataNode<T> *currentIter;
 public:
+
 	StackIterator(DataNode<T>*);
+	StackIterator(Stack<T> const&);
 	~StackIterator();
 
 	U next();
@@ -26,6 +30,9 @@ StackIterator<T, U>::StackIterator(DataNode<T> *initialNode) {
 template <typename T, typename U>
 StackIterator<T, U>::~StackIterator() {
 
+}
+template <typename T, typename U>
+StackIterator<T, U>::StackIterator(Stack<T> const& container): StackIterator(container.head){
 }
 
 template <typename T, typename U>
@@ -51,6 +58,11 @@ private:
 
 	void deleteElements();
 public:
+	typedef StackIterator<T, T&> iterator;
+
+	friend class StackIterator<T, T&>;
+	friend class StackIterator<T, T const&>;
+
 	Stack<T>& operator=(Stack<T> const&);
 
 	int size() const;
